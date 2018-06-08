@@ -722,39 +722,37 @@ class TextFocusListener implements FocusListener {
         if (temp.equals("")) {
             //jtf.setText(info);
         }
-        if (temp != null && !"".equals(temp)) {
-            switch (index) {
-                case 1:
-                    settings.setBasepackage(jtf.getText());
-                    break;
-                case 2:
-                    settings.setNamespace(jtf.getText());
-                    break;
-                case 3:
-                    settings.setOutRoot(jtf.getText());
-                    break;
-                case 4:
-                    settings.setTableRemovePrefixes(jtf.getText());
-                    break;
-                case 6:
-                    settings.setJdbcUrl(jtf.getText());
-                    break;
-                case 7:
-                    settings.setJdbcDriver(jtf.getText());
-                    break;
-                case 8:
-                    settings.setJdbcUsername(jtf.getText());
-                    break;
-                case 9:
-                    settings.setJdbcPassword(jtf.getText());
-                    break;
-                case 10:
-                    settings.setTable(jtf.getText());
-                    break;
-                case 11:
-                    settings.setTemplate(jtf.getText());
-                    break;
-            }
+        switch (index) {
+            case 1:
+                settings.setBasepackage(jtf.getText());
+                break;
+            case 2:
+                settings.setNamespace(jtf.getText());
+                break;
+            case 3:
+                settings.setOutRoot(jtf.getText());
+                break;
+            case 4:
+                settings.setTableRemovePrefixes(jtf.getText());
+                break;
+            case 6:
+                settings.setJdbcUrl(jtf.getText());
+                break;
+            case 7:
+                settings.setJdbcDriver(jtf.getText());
+                break;
+            case 8:
+                settings.setJdbcUsername(jtf.getText());
+                break;
+            case 9:
+                settings.setJdbcPassword(jtf.getText());
+                break;
+            case 10:
+                settings.setTable(jtf.getText());
+                break;
+            case 11:
+                settings.setTemplate(jtf.getText());
+                break;
         }
     }
 
