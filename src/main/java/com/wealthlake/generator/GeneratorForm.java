@@ -409,8 +409,9 @@ public class GeneratorForm extends JFrame {
     }
 
     private void setDefaultJdbc(int dbType) {
-        String defaultJdbcUrl = getdefaultJdbcUrl(dbType);
-        String defaultJdbcDriver = getdefaultJdbcDriver(dbType);
+        String[] jdbcConfig = getdefaultJdbcConfig(dbType);
+        String defaultJdbcUrl = jdbcConfig[0];
+        String defaultJdbcDriver = jdbcConfig[1];
         if (setJdbcUrlLabelText.getText() == null || "".equals(setJdbcUrlLabelText.getText())) {
             setJdbcUrlLabelText.setText(defaultJdbcUrl);
         }
@@ -419,84 +420,56 @@ public class GeneratorForm extends JFrame {
         }
     }
 
-    private String getdefaultJdbcUrl(int dbType) {
+    private String[] getdefaultJdbcConfig(int dbType) {
         String jdbcUrl = null;
-        switch (dbType) {
-            case 1:
-                jdbcUrl = "jdbc:mysql://localhost:3306/[database]?useUnicode=true&amp;characterEncoding=UTF-8";
-                break;
-            case 2:
-                jdbcUrl = "jdbc:oracle:thin:@localhost:1521:[sid]";
-                break;
-            case 3:
-                jdbcUrl = "jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=[database]";
-                break;
-            case 4:
-                jdbcUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=[database]";
-                break;
-            case 5:
-                jdbcUrl = "jdbc:jtds:sqlserver://localhost:1433/[database];tds=8.0;lastupdatecount=true";
-                break;
-            case 6:
-                jdbcUrl = "jdbc:postgresql://localhost/[database]";
-                break;
-            case 7:
-                jdbcUrl = "jdbc:sybase:Tds:localhost:5007/[database]";
-                break;
-            case 8:
-                jdbcUrl = "jdbc:db2://localhost:5000/[database]";
-                break;
-            case 9:
-                jdbcUrl = "jdbc:hsqldb:mem:generatorDB";
-                break;
-            case 10:
-                jdbcUrl = "jdbc:derby://localhost/[database]";
-                break;
-            case 11:
-                jdbcUrl = "jdbc:h2:tcp://localhost/~/[database]";
-                break;
-        }
-        return jdbcUrl;
-    }
-
-    private String getdefaultJdbcDriver(int dbType) {
         String jdbcDriver = null;
         switch (dbType) {
             case 1:
+                jdbcUrl = "jdbc:mysql://localhost:3306/[database]?useUnicode=true&amp;characterEncoding=UTF-8";
                 jdbcDriver = "com.mysql.jdbc.Driver";
                 break;
             case 2:
+                jdbcUrl = "jdbc:oracle:thin:@localhost:1521:[sid]";
                 jdbcDriver = "oracle.jdbc.driver.OracleDriver";
                 break;
             case 3:
+                jdbcUrl = "jdbc:microsoft:sqlserver://localhost:1433;DatabaseName=[database]";
                 jdbcDriver = "com.microsoft.jdbc.sqlserver.SQLServerDriver";
                 break;
             case 4:
+                jdbcUrl = "jdbc:sqlserver://localhost:1433;DatabaseName=[database]";
                 jdbcDriver = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
                 break;
             case 5:
+                jdbcUrl = "jdbc:jtds:sqlserver://localhost:1433/[database];tds=8.0;lastupdatecount=true";
                 jdbcDriver = "net.sourceforge.jtds.jdbc.Driver";
                 break;
             case 6:
+                jdbcUrl = "jdbc:postgresql://localhost/[database]";
                 jdbcDriver = "org.postgresql.Driver";
                 break;
             case 7:
+                jdbcUrl = "jdbc:sybase:Tds:localhost:5007/[database]";
                 jdbcDriver = "com.sybase.jdbc.SybDriver";
                 break;
             case 8:
+                jdbcUrl = "jdbc:db2://localhost:5000/[database]";
                 jdbcDriver = "com.ibm.db2.jdbc.app.DB2Driver";
                 break;
             case 9:
+                jdbcUrl = "jdbc:hsqldb:mem:generatorDB";
                 jdbcDriver = "org.hsqldb.jdbcDriver";
                 break;
             case 10:
+                jdbcUrl = "jdbc:derby://localhost/[database]";
                 jdbcDriver = "org.apache.derby.jdbc.ClientDriver";
                 break;
             case 11:
+                jdbcUrl = "jdbc:h2:tcp://localhost/~/[database]";
                 jdbcDriver = "org.h2.Driver";
                 break;
         }
-        return jdbcDriver;
+        return new String[]{jdbcUrl, jdbcDriver};
     }
 
     private void generator(MouseEvent e) throws Exception {
