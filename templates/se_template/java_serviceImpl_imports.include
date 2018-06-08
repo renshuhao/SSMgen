@@ -1,0 +1,20 @@
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.sztx.core.service.impl.BaseServiceImpl;
+import com.sztx.dataaccess.mysql.config.FilterRule;
+import com.sztx.dataaccess.mysql.config.PageQuery;
+import ${basepackage}.core.service.${className}Service;
+import ${basepackage}.dataaccess.dao.mysql.${className}MysqlDAO;
+import ${basepackage}.dataaccess.domain.${className}DO;
+
+
+/**
+ * @author 
+ * @version 1.0
+ * @since 1.0
+ * Created by xxx on 2018/05/05
+ */
+

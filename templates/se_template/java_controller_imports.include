@@ -1,0 +1,18 @@
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.sztx.se.common.util.CommonUtil;
+import com.sztx.se.web.controller.BaseController;
+import ${basepackage}.dataaccess.domain.${className}DO;
+
+/**
+ * @author 
+ * @version 1.0
+ * @since 1.0
+ * Created by xxx on 2018/05/05
+ */
+

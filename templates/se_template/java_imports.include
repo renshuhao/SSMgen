@@ -1,0 +1,21 @@
+import java.util.*;
+
+import javacommon.base.*;
+import javacommon.util.*;
+
+import com.cfth.core.util.*;
+import com.cfth.core.web.util.*;
+import com.cfth.core.page.*;
+import com.cfth.core.page.impl.*;
+
+import ${basepackage}.model.*;
+import ${basepackage}.dao.*;
+import ${basepackage}.service.*;
+import ${basepackage}.vo.query.*;
+
+/**
+ * @author 
+ * @version 1.0
+ * @since 1.0
+ */
+

@@ -1,0 +1,14 @@
+import java.util.List;
+
+import com.sztx.core.service.BaseService;
+import com.sztx.dataaccess.mysql.config.FilterRule;
+import com.sztx.dataaccess.mysql.config.PageQuery;
+import ${basepackage}.dataaccess.domain.*;
+
+/**
+ * @author 
+ * @version 1.0
+ * @since 1.0
+ * Created by xxx on 2018/05/05
+ */
+

@@ -1,0 +1,20 @@
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.se.common.util.validate.ValidateUtil;
+import com.se.core.service.impl.BaseServiceImpl;
+import com.sztx.demo.core.service.${className}Service;
+import com.sztx.demo.dataaccess.dao.mysql.${className}MysqlDAO;
+import com.sztx.demo.dataaccess.domain.${className}DO;
+
+/**
+ * @author 
+ * @version 1.0
+ * @since 1.0
+ * Created by xxx on 2017/05/05
+ */
+

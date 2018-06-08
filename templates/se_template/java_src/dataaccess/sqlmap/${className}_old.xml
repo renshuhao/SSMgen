@@ -1,0 +1,136 @@
+<#assign className = table.className>   
+<#assign classNameFirstLower = table.classNameFirstLower>   
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<#macro mapperEl value>${r"#{"}${value}}</#macro>
+<#macro namespace>${className}</#macro>
+
+<mapper namespace="${basepackage}.dataaccess.dao.mysql.${className}MysqlDAO">
+
+	<resultMap id="Rm${className}" type="${basepackage}.dataaccess.domain.${className}DO">
+        <#list table.columns as column>
+        <result property="${column.columnNameLower}" column="${column.sqlName}"/>
+		</#list>
+				<!-- many-to-one -->
+		<#list table.importedKeys.associatedTables?values as foreignKey>
+			<#assign fkSqlTable = foreignKey.sqlTable>
+			<#assign fkTable    = fkSqlTable.className>
+			<#assign fkPojoClass = fkSqlTable.className>
+			<#assign fkPojoClassVar = fkPojoClass?uncap_first>
+			
+			<#list foreignKey.parentColumns?values as fkColumn>
+				<association property="${fkPojoClassVar}" column="${fkColumn}" select="${fkPojoClass}.${fkPojoClass}GetById"/> 
+		    </#list>
+		</#list>
+	</resultMap>
+	
+	<!-- 用于select查询公用抽取的列 -->
+	<sql id="${classNameFirstLower}Columns">
+	    <![CDATA[
+		<#list table.columns as column>${column.sqlName}<#if column_has_next>,</#if></#list>
+	    ]]>
+	</sql>
+
+	<insert id="save" useGeneratedKeys="true" keyColumn="${table.idColumn.columnNameFirstLower}" keyProperty="${table.idColumn.columnNameFirstLower}">
+    <![CDATA[
+        INSERT INTO ${table.sqlName} (
+        <#list table.columns as column>
+        	${column.sqlName} <#if column_has_next>,</#if>
+        </#list>
+        ) VALUES (
+        <#list table.columns as column>
+        	<@mapperEl column.columnNameFirstLower/> <#if column_has_next>,</#if>
+        </#list>        
+        )
+    ]]>
+	</insert>
+    
+	<update id="update" >
+    <![CDATA[
+        UPDATE ${table.sqlName} SET
+	        <#list table.notPkColumns as column>
+	        ${column.sqlName} = <@mapperEl column.columnNameFirstLower/> <#if column_has_next>,</#if>
+	        </#list>
+        WHERE 
+        	<#list table.compositeIdColumns as column>
+	        ${column.sqlName} = <@mapperEl column.columnNameLower/> <#if column_has_next> AND </#if>
+	        </#list>	        
+    ]]>
+	</update>
+
+    <delete id="delete">
+    <![CDATA[
+        DELETE FROM ${table.sqlName} WHERE
+        <#list table.compositeIdColumns as column>
+        ${column.sqlName} = <@mapperEl 'id'/> <#if column_has_next> AND </#if>
+		</#list>
+    ]]>
+    </delete>
+    
+    <select id="findById" resultMap="Rm${className}">
+		SELECT <include refid="${classNameFirstLower}Columns" />
+	    <![CDATA[
+		    FROM ${table.sqlName} 
+	        WHERE 
+				<#list table.compositeIdColumns as column>
+		        ${column.sqlName} = <@mapperEl 'id'/> <#if column_has_next> AND </#if>
+		        </#list>    
+	    ]]>
+	</select>
+	
+	<!-- 过滤规则sql -->
+	<sql id="${classNameFirstLower}FilterRule">
+		<where>
+			1=1
+	       	<foreach collection="filterRules" item="item" index="index" open="" close="" separator=" ">
+				AND ${r'${item.key}'} ${r'${item.comparator}'}
+				<choose>
+			        <when test='item.comparator == "like"'>
+			            "%"${r'#{item.value}'}"%"
+			        </when>
+			        <when test='item.comparator == "in" or item.comparator == "notin"'>
+			            (${r'${item.value}'})
+			        </when>
+			        <otherwise>
+			           ${r'#{item.value}'}
+			        </otherwise>
+			    </choose>
+    
+		   </foreach>
+		</where>
+	</sql>
+	
+	<select id="findAll" resultMap="Rm${className}">
+    	SELECT <include refid="${classNameFirstLower}Columns" />
+	    FROM ${table.sqlName} 
+		<include refid="${classNameFirstLower}FilterRule"/>
+    </select>
+	
+	<delete id="deleteAll">
+    	DELETE
+	    FROM ${table.sqlName} 
+		<include refid="${classNameFirstLower}FilterRule"/>
+    </delete>
+    
+    <select id="findByPage" resultMap="Rm${className}">
+    	SELECT <include refid="${classNameFirstLower}Columns" />
+	    FROM ${table.sqlName} 
+		<include refid="${classNameFirstLower}FilterRule"/>
+		
+		<if test="pageQuery.orderBy != null">
+			ORDER BY ${r'${pageQuery.orderBy}'} ${r'${pageQuery.orderType}'}
+		</if>
+		LIMIT ${r'${pageQuery.start}'}, ${r'${pageQuery.pageSize}'}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT count(${table.idColumn.columnNameFirstLower}) 
+        FROM ${table.sqlName} 
+		<include refid="${classNameFirstLower}FilterRule"/>
+    </select>
+    
+    
+</mapper>
+

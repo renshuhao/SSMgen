@@ -1,0 +1,6 @@
+/*
+ * Powered By [cfth]
+ * Web Site: 财富天湖
+ * Since 2018 <#if now??>- ${now?string('yyyy')}</#if>
+ */
+
