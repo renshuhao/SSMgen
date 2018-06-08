@@ -19,9 +19,10 @@ import java.util.Date;
  * 生成器窗体类，程序入口
  *
  * @author rsh
+ * @date 2018/06/06
  * @version v.1.2
  */
-@SuppressWarnings("serial")
+
 public class GeneratorForm extends JFrame {
     private JPanel settingsPanel;
     private JLabel setBasepackageLabel;
@@ -59,10 +60,11 @@ public class GeneratorForm extends JFrame {
     int lineNumber = 1;
     boolean isRead = false;
     File logFile;
-    private static String templateFolder = "templates";
-    private static String logFolder = "log";
+    String templateFolder = "templates";
+    String logFolder = "log";
     boolean logFileCreate = false;
 
+    // 程序入口
     public static void main(String args[]) {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
@@ -70,15 +72,6 @@ public class GeneratorForm extends JFrame {
                 new GeneratorForm().setVisible(true);
             }
         });
-    }
-
-    private void outputException(Exception e) {
-        if (logFileCreate) {
-            System.out.println(e);
-        } else {
-            logTextArea.append(e.getClass() + e.getMessage());
-            logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
-        }
     }
 
     public GeneratorForm() {
@@ -145,6 +138,9 @@ public class GeneratorForm extends JFrame {
         }
     }
 
+    /**
+     * 刷新显示日志信息
+     */
     private void refreshLog() {
         try {
             if (!isRead) {
@@ -160,6 +156,19 @@ public class GeneratorForm extends JFrame {
             }
         } catch (Exception e) {
             outputException(e);
+        }
+    }
+
+    /**
+     * 输入异常信息
+     * @param e
+     */
+    private void outputException(Exception e) {
+        if (logFileCreate) {
+            System.out.println(e);
+        } else {
+            logTextArea.append(e.getClass() + e.getMessage());
+            logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
         }
     }
 
@@ -310,10 +319,8 @@ public class GeneratorForm extends JFrame {
         //panel.setPreferredSize(new Dimension(500, 600));//关键代码,设置JPanel的大小
         // 创建分组布局，并关联容器
         GroupLayout layout = new GroupLayout(panel);
-
         // 设置容器的布局
         panel.setLayout(layout);
-
         // 自动创建组件之间的间隙
         layout.setAutoCreateGaps(true);
         // 自动创建容器与触到容器边框的组件之间的间隙
@@ -346,7 +353,6 @@ public class GeneratorForm extends JFrame {
 
         // 水平串行（左右）hParalGroup01 和 hParalGroup02
         GroupLayout.SequentialGroup hSeqGroup = layout.createSequentialGroup().addGroup(hParalGroup01).addGroup(hParalGroup02);
-
         // 水平并行（上下）hSeqGroup 和 btn05
         GroupLayout.ParallelGroup hParalGroup = layout.createParallelGroup()
                 .addGroup(hSeqGroup)
@@ -390,6 +396,7 @@ public class GeneratorForm extends JFrame {
         setContentPane(panel);
         setTitle("SSM代码生成器");
 
+        // 监听窗口关闭事件
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
@@ -403,11 +410,19 @@ public class GeneratorForm extends JFrame {
         pack();
     }
 
+    /**
+     * 数据类型修改事件
+     * @param evt
+     */
     private void dbTypeComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {
         setting.setDbType(setDbTypeComboBox.getSelectedIndex() + 1);
         setDefaultJdbc(setting.getDbType());
     }
 
+    /**
+     * 设置数据源配置
+     * @param dbType
+     */
     private void setDefaultJdbc(int dbType) {
         String[] jdbcConfig = getdefaultJdbcConfig(dbType);
         String defaultJdbcUrl = jdbcConfig[0];
@@ -420,6 +435,11 @@ public class GeneratorForm extends JFrame {
         }
     }
 
+    /**
+     * 获取数据类型对应的数据源链接地址
+     * @param dbType
+     * @return
+     */
     private String[] getdefaultJdbcConfig(int dbType) {
         String jdbcUrl = null;
         String jdbcDriver = null;
@@ -472,6 +492,11 @@ public class GeneratorForm extends JFrame {
         return new String[]{jdbcUrl, jdbcDriver};
     }
 
+    /**
+     * 开始生成代码
+     * @param e
+     * @throws Exception
+     */
     private void generator(MouseEvent e) throws Exception {
         generatorBut.setEnabled(false);
         String basepackage = setting.getBasepackage();
@@ -496,6 +521,16 @@ public class GeneratorForm extends JFrame {
             generatorBut.setEnabled(true);
             return;
         }
+        if (jdbcUrl == null || "".equals(jdbcUrl)) {
+            new Dialog("请输入数据库链接地址").jd.setVisible(true);
+            generatorBut.setEnabled(true);
+            return;
+        }
+        if (jdbcDriver == null || "".equals(jdbcDriver)) {
+            new Dialog("请输入数据库链接驱动").jd.setVisible(true);
+            generatorBut.setEnabled(true);
+            return;
+        }
         if (jdbcUsername == null || "".equals(jdbcUsername)) {
             new Dialog("请输入数据库用户名").jd.setVisible(true);
             generatorBut.setEnabled(true);
@@ -516,51 +551,43 @@ public class GeneratorForm extends JFrame {
             GeneratorProperties.setProperty("basepackage", basepackage);
             ConfigProperties.setProperty("basepackage", basepackage);
         }
-
         if (namespace != null && !"".equals(namespace)) {
             GeneratorProperties.setProperty("namespace", namespace);
             ConfigProperties.setProperty("namespace", namespace);
         }
-
         if (outRoot != null && !"".equals(outRoot)) {
             GeneratorProperties.setProperty("outRoot", outRoot);
             ConfigProperties.setProperty("outRoot", outRoot);
         }
-
         if (tableRemovePrefixes != null && !"".equals(tableRemovePrefixes)) {
             GeneratorProperties.setProperty("tableRemovePrefixes", tableRemovePrefixes);
             ConfigProperties.setProperty("tableRemovePrefixes", tableRemovePrefixes);
         }
-
         if (jdbcUrl != null && !"".equals(jdbcUrl)) {
             GeneratorProperties.setProperty("jdbc_url", jdbcUrl);
             ConfigProperties.setProperty("jdbc_url", jdbcUrl);
         }
-
         if (jdbcDriver != null && !"".equals(jdbcDriver)) {
             GeneratorProperties.setProperty("jdbc_driver", jdbcDriver);
             ConfigProperties.setProperty("jdbc_driver", jdbcDriver);
         }
-
         if (jdbcUsername != null && !"".equals(jdbcUsername)) {
             GeneratorProperties.setProperty("jdbc_username", jdbcUsername);
             ConfigProperties.setProperty("jdbc_username", jdbcUsername);
         }
-
         if (jdbcPassword != null && !"".equals(jdbcPassword)) {
             GeneratorProperties.setProperty("jdbc_password", jdbcPassword);
             ConfigProperties.setProperty("jdbc_password", jdbcPassword);
         }
-
         if (table != null && !"".equals(table)) {
             GeneratorProperties.setProperty("table", table);
             ConfigProperties.setProperty("table", table);
         }
-
         if (template != null && !"".equals(template)) {
             GeneratorProperties.setProperty("template", template);
             ConfigProperties.setProperty("template", template);
         }
+
         try {
             StringBuffer sb = new StringBuffer();
             sb.append("\n");
@@ -578,12 +605,13 @@ public class GeneratorForm extends JFrame {
 
             GeneratorFacade g = new GeneratorFacade();
             g.getGenerator().setTemplateRootDir(templateFolder + File.separator + template);
-            g.deleteOutRootDir();
+            g.deleteOutRootDir(); // 删除生成器的输出目录
             if (table != null && !"".equals(table)) {
-                g.generateByTable(table.split(","));//删除生成器的输出目录
+                g.generateByTable(table.split(",")); // 根据输入的数据表生成
             } else {
-                g.generateByAllTable();    //通过数据库表生成文件,template为模板的根目录
+                g.generateByAllTable();    // 生成所有数据表代码
             }
+
             refreshLog();
 
             sb = new StringBuffer();
