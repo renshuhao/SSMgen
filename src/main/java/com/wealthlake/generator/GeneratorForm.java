@@ -10,6 +10,7 @@ import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -76,6 +77,7 @@ public class GeneratorForm extends JFrame {
             System.out.println(e);
         } else {
             logTextArea.append(e.getClass() + e.getMessage());
+            logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
         }
     }
 
@@ -87,6 +89,14 @@ public class GeneratorForm extends JFrame {
         int windowHeight = this.getHeight(); // 获得窗口高
         this.setLocation(screenWidth / 2 - windowWidth / 2, screenHeight / 2 - windowHeight / 2);// 设置窗口居中显示
         try {
+            try {
+                String ln = ConfigProperties.getProperty("lineNumber");
+                if (ln != null && !"".equals(ln)) {
+                    lineNumber = Integer.valueOf(ln);
+                }
+            } catch (NumberFormatException e) {
+                outputException(e);
+            }
             //String path = GeneratorForm.class.getProtectionDomain().getCodeSource().getLocation().getPath();
             //path = URLDecoder.decode(path, "utf-8");
             String fileName = "log_" + new SimpleDateFormat("yyyyMMdd").format(new Date()) + ".log";
@@ -102,7 +112,7 @@ public class GeneratorForm extends JFrame {
                 logFile.delete();
             }
             if (b) {
-                out = new PrintStream(logFile);
+                out = new PrintStream(new FileOutputStream(logFile, true), true);
                 System.setOut(out);
                 System.setErr(out);
                 GLogger.out = out;
@@ -143,6 +153,8 @@ public class GeneratorForm extends JFrame {
                 if (fileLineInfo != null) {
                     lineNumber = fileLineInfo.getLineNumber();
                     logTextArea.append(fileLineInfo.getContent());
+                    logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+                    ConfigProperties.setProperty("lineNumber", String.valueOf(lineNumber));
                 }
                 isRead = false;
             }
@@ -189,7 +201,7 @@ public class GeneratorForm extends JFrame {
         setOutRootLabelText.setPreferredSize(new Dimension(400, 30));
         settingsChange(setOutRootLabelText, 3);
 
-        setTableRemovePrefixesLabel = new JLabel("表名前缀");
+        setTableRemovePrefixesLabel = new JLabel("去除表名前缀");
         setTableRemovePrefixesLabel.setSize(new Dimension(50, 30));
         setTableRemovePrefixesLabel.setHorizontalAlignment(SwingConstants.LEFT);
         setTableRemovePrefixesLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -588,6 +600,7 @@ public class GeneratorForm extends JFrame {
                 refreshLog();
             } else {
                 logTextArea.append(sb.toString());
+                logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
             }
 
             GeneratorFacade g = new GeneratorFacade();
@@ -611,6 +624,7 @@ public class GeneratorForm extends JFrame {
                 refreshLog();
             } else {
                 logTextArea.append(sb.toString());
+                logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
             }
 
             //new Dialog("代码生成已完成").jd.setVisible(true);
@@ -657,39 +671,37 @@ public class GeneratorForm extends JFrame {
 
     private void settingsChange(JTextField jtf, int index) {
         String temp = jtf.getText();
-        if (temp != null && !"".equals(temp)) {
-            switch (index) {
-                case 1:
-                    setting.setBasepackage(jtf.getText());
-                    break;
-                case 2:
-                    setting.setNamespace(jtf.getText());
-                    break;
-                case 3:
-                    setting.setOutRoot(jtf.getText());
-                    break;
-                case 4:
-                    setting.setTableRemovePrefixes(jtf.getText());
-                    break;
-                case 6:
-                    setting.setJdbcUrl(jtf.getText());
-                    break;
-                case 7:
-                    setting.setJdbcDriver(jtf.getText());
-                    break;
-                case 8:
-                    setting.setJdbcUsername(jtf.getText());
-                    break;
-                case 9:
-                    setting.setJdbcPassword(jtf.getText());
-                    break;
-                case 10:
-                    setting.setTable(jtf.getText());
-                    break;
-                case 11:
-                    setting.setTemplate(jtf.getText());
-                    break;
-            }
+        switch (index) {
+            case 1:
+                setting.setBasepackage(temp);
+                break;
+            case 2:
+                setting.setNamespace(temp);
+                break;
+            case 3:
+                setting.setOutRoot(temp);
+                break;
+            case 4:
+                setting.setTableRemovePrefixes(temp);
+                break;
+            case 6:
+                setting.setJdbcUrl(temp);
+                break;
+            case 7:
+                setting.setJdbcDriver(temp);
+                break;
+            case 8:
+                setting.setJdbcUsername(temp);
+                break;
+            case 9:
+                setting.setJdbcPassword(temp);
+                break;
+            case 10:
+                setting.setTable(temp);
+                break;
+            case 11:
+                setting.setTemplate(temp);
+                break;
         }
     }
 
@@ -724,34 +736,34 @@ class TextFocusListener implements FocusListener {
         }
         switch (index) {
             case 1:
-                settings.setBasepackage(jtf.getText());
+                settings.setBasepackage(temp);
                 break;
             case 2:
-                settings.setNamespace(jtf.getText());
+                settings.setNamespace(temp);
                 break;
             case 3:
-                settings.setOutRoot(jtf.getText());
+                settings.setOutRoot(temp);
                 break;
             case 4:
-                settings.setTableRemovePrefixes(jtf.getText());
+                settings.setTableRemovePrefixes(temp);
                 break;
             case 6:
-                settings.setJdbcUrl(jtf.getText());
+                settings.setJdbcUrl(temp);
                 break;
             case 7:
-                settings.setJdbcDriver(jtf.getText());
+                settings.setJdbcDriver(temp);
                 break;
             case 8:
-                settings.setJdbcUsername(jtf.getText());
+                settings.setJdbcUsername(temp);
                 break;
             case 9:
-                settings.setJdbcPassword(jtf.getText());
+                settings.setJdbcPassword(temp);
                 break;
             case 10:
-                settings.setTable(jtf.getText());
+                settings.setTable(temp);
                 break;
             case 11:
-                settings.setTemplate(jtf.getText());
+                settings.setTemplate(temp);
                 break;
         }
     }

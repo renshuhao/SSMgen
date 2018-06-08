@@ -26,7 +26,7 @@ public class FileReadUtil {
                 return null;
             }
             int lines = 1;
-            String s = reader.readLine();;
+            String s = reader.readLine();
             while (s != null) {
                 if (lines >= lineNumber) {
                     if (s != null) {
