@@ -90,7 +90,7 @@ public class GeneratorForm extends JFrame {
             try {
                 String ln = ConfigProperties.getProperty("lineNumber");
                 if (ln != null && !"".equals(ln)) {
-                    lineNumber = Integer.valueOf(ln);
+                    //lineNumber = Integer.valueOf(ln);
                 }
             } catch (NumberFormatException e) {
                 outputException(e);
@@ -681,11 +681,11 @@ public class GeneratorForm extends JFrame {
 
         try {
             StringBuffer sb = new StringBuffer();
-            sb.append("\n");
-            sb.append("***************************************************************\n");
-            sb.append("* * 开始生成代码 * *\n");
-            sb.append("* * " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " * *\n");
-            sb.append("***************************************************************\n");
+            sb.append("\r\n");
+            sb.append("***************************************************************\r\n");
+            sb.append("* * 开始生成代码 * *\r\n");
+            sb.append("* * " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " * *\r\n");
+            sb.append("***************************************************************\r\n");
             if (logFileCreate) {
                 System.out.println(sb.toString());
                 refreshLog();
@@ -706,11 +706,11 @@ public class GeneratorForm extends JFrame {
             refreshLog();
 
             sb = new StringBuffer();
-            sb.append("\n");
-            sb.append("***************************************************************\n");
-            sb.append("* * 生成代码完成 * *\n");
-            sb.append("* * " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " * *\n");
-            sb.append("***************************************************************\n");
+            sb.append("\r\n");
+            sb.append("***************************************************************\r\n");
+            sb.append("* * 生成代码完成 * *\r\n");
+            sb.append("* * " + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()) + " * *\r\n");
+            sb.append("***************************************************************\r\n");
             if (logFileCreate) {
                 System.out.println(sb.toString());
                 refreshLog();
