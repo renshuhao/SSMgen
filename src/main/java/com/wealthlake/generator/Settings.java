@@ -24,6 +24,10 @@ public class Settings {
     private String tableRemovePrefixes;
     // 数据库类型，1：Mysql，2：Oracle，3：SQLServer2000，4：SQLServer2005，5：JTDs for SQLServer ，6：PostgreSql，7：Sybase，8：DB2，9：HsqlDB，10：Derby，11：H2
     private int dbType;
+    // oracle schema
+    private String jdbcSchema;
+    // oracle catalog
+    private String jdbcCatalog;
     // 数据库连接地址
     private String jdbcUrl;
     // 数据库连接驱动
@@ -79,6 +83,22 @@ public class Settings {
 
     public void setDbType(int dbType) {
         this.dbType = dbType;
+    }
+
+    public String getJdbcSchema() {
+        return jdbcSchema;
+    }
+
+    public void setJdbcSchema(String jdbcSchema) {
+        this.jdbcSchema = jdbcSchema;
+    }
+
+    public String getJdbcCatalog() {
+        return jdbcCatalog;
+    }
+
+    public void setJdbcCatalog(String jdbcCatalog) {
+        this.jdbcCatalog = jdbcCatalog;
     }
 
     public String getJdbcUrl() {

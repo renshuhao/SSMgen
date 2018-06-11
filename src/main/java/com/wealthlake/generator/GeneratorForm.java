@@ -19,8 +19,8 @@ import java.util.Date;
  * 生成器窗体类，程序入口
  *
  * @author rsh
- * @date 2018/06/06
  * @version v.1.2
+ * @date 2018/06/06
  */
 
 public class GeneratorForm extends JFrame {
@@ -39,6 +39,10 @@ public class GeneratorForm extends JFrame {
     private JTextField setJdbcUrlLabelText;
     private JLabel setJdbcDriverLabel;
     private JTextField setJdbcDriverLabelText;
+    private JLabel setJdbcSchemaLabel;
+    private JTextField setJdbcSchemaLabelText;
+    private JLabel setJdbcCatalogLabel;
+    private JTextField setJdbcCatalogLabelText;
     private JLabel setJdbcUsernameLabel;
     private JTextField setJdbcUsernameLabelText;
     private JLabel setJdbcPasswordLabel;
@@ -63,6 +67,7 @@ public class GeneratorForm extends JFrame {
     String templateFolder = "templates";
     String logFolder = "log";
     boolean logFileCreate = false;
+    int isNeedBottom = 0;
 
     // 程序入口
     public static void main(String args[]) {
@@ -150,6 +155,7 @@ public class GeneratorForm extends JFrame {
                     lineNumber = fileLineInfo.getLineNumber();
                     logTextArea.append(fileLineInfo.getContent());
                     logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+                    isNeedBottom = 0;
                     ConfigProperties.setProperty("lineNumber", String.valueOf(lineNumber));
                 }
                 isRead = false;
@@ -161,6 +167,7 @@ public class GeneratorForm extends JFrame {
 
     /**
      * 输入异常信息
+     *
      * @param e
      */
     private void outputException(Exception e) {
@@ -169,6 +176,7 @@ public class GeneratorForm extends JFrame {
         } else {
             logTextArea.append(e.getClass() + e.getMessage());
             logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+            isNeedBottom = 0;
         }
     }
 
@@ -231,7 +239,7 @@ public class GeneratorForm extends JFrame {
             }
         });
 
-        setJdbcUrlLabel = new JLabel("数据库链接地址");
+        setJdbcUrlLabel = new JLabel("数据源:URL");
         setJdbcUrlLabel.setSize(new Dimension(50, 30));
         setJdbcUrlLabel.setHorizontalAlignment(SwingConstants.LEFT);
         setJdbcUrlLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -240,7 +248,7 @@ public class GeneratorForm extends JFrame {
         setJdbcUrlLabelText.addFocusListener(new TextFocusListener("", setJdbcUrlLabelText, 6, setting));//添加焦点事件反映
         setJdbcUrlLabelText.setPreferredSize(new Dimension(400, 30));
 
-        setJdbcDriverLabel = new JLabel("数据库链接驱动");
+        setJdbcDriverLabel = new JLabel("数据源:驱动");
         setJdbcDriverLabel.setSize(new Dimension(50, 30));
         setJdbcDriverLabel.setHorizontalAlignment(SwingConstants.LEFT);
         setJdbcDriverLabel.setVerticalAlignment(SwingConstants.CENTER);
@@ -250,29 +258,53 @@ public class GeneratorForm extends JFrame {
         setJdbcDriverLabelText.setPreferredSize(new Dimension(400, 30));
         setJdbcDriverLabelText.setEditable(false);
 
+        setJdbcSchemaLabel = new JLabel("数据源:schema");
+        setJdbcSchemaLabel.setSize(new Dimension(50, 30));
+        setJdbcSchemaLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        setJdbcSchemaLabel.setVerticalAlignment(SwingConstants.CENTER);
+        setJdbcSchemaLabelText = new JTextField("");
+        setJdbcSchemaLabelText.setText(ConfigProperties.getProperty("jdbc_schema"));
+        setJdbcSchemaLabelText.addFocusListener(new TextFocusListener("", setJdbcSchemaLabelText, 8, setting));//添加焦点事件反映
+        setJdbcSchemaLabelText.setPreferredSize(new Dimension(400, 30));
+        setJdbcSchemaLabel.setVisible(false);
+        setJdbcSchemaLabelText.setVisible(false);
+
+        setJdbcCatalogLabel = new JLabel("数据源:catalog");
+        setJdbcCatalogLabel.setSize(new Dimension(50, 30));
+        setJdbcCatalogLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        setJdbcCatalogLabel.setVerticalAlignment(SwingConstants.CENTER);
+        setJdbcCatalogLabelText = new JTextField("");
+        setJdbcCatalogLabelText.setText(ConfigProperties.getProperty("jdbc_catalog"));
+        setJdbcCatalogLabelText.addFocusListener(new TextFocusListener("", setJdbcCatalogLabelText, 9, setting));//添加焦点事件反映
+        setJdbcCatalogLabelText.setPreferredSize(new Dimension(400, 30));
+        setJdbcCatalogLabel.setVisible(false);
+        setJdbcCatalogLabelText.setVisible(false);
+
         dbTypeComboBox1ItemStateChanged(null);
         settingsChange(setJdbcUrlLabelText, 6);
         settingsChange(setJdbcDriverLabelText, 7);
+        settingsChange(setJdbcSchemaLabelText, 8);
+        settingsChange(setJdbcCatalogLabelText, 9);
 
-        setJdbcUsernameLabel = new JLabel("数据库用户名");
+        setJdbcUsernameLabel = new JLabel("数据源:用户名");
         setJdbcUsernameLabel.setSize(new Dimension(50, 30));
         setJdbcUsernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
         setJdbcUsernameLabel.setVerticalAlignment(SwingConstants.CENTER);
         setJdbcUsernameLabelText = new JTextField("");
         setJdbcUsernameLabelText.setText(ConfigProperties.getProperty("jdbc_username"));
-        setJdbcUsernameLabelText.addFocusListener(new TextFocusListener("", setJdbcUsernameLabelText, 8, setting));//添加焦点事件反映
+        setJdbcUsernameLabelText.addFocusListener(new TextFocusListener("", setJdbcUsernameLabelText, 10, setting));//添加焦点事件反映
         setJdbcUsernameLabelText.setPreferredSize(new Dimension(400, 30));
-        settingsChange(setJdbcUsernameLabelText, 8);
+        settingsChange(setJdbcUsernameLabelText, 10);
 
-        setJdbcPasswordLabel = new JLabel("数据库密码");
+        setJdbcPasswordLabel = new JLabel("数据源:密码");
         setJdbcPasswordLabel.setSize(new Dimension(50, 30));
         setJdbcPasswordLabel.setHorizontalAlignment(SwingConstants.LEFT);
         setJdbcPasswordLabel.setVerticalAlignment(SwingConstants.CENTER);
         setJdbcPasswordLabelText = new JTextField("");
         setJdbcPasswordLabelText.setText(ConfigProperties.getProperty("jdbc_password"));
-        setJdbcPasswordLabelText.addFocusListener(new TextFocusListener("", setJdbcPasswordLabelText, 9, setting));//添加焦点事件反映
+        setJdbcPasswordLabelText.addFocusListener(new TextFocusListener("", setJdbcPasswordLabelText, 11, setting));//添加焦点事件反映
         setJdbcPasswordLabelText.setPreferredSize(new Dimension(400, 30));
-        settingsChange(setJdbcPasswordLabelText, 9);
+        settingsChange(setJdbcPasswordLabelText, 11);
 
         setTableLabel = new JLabel("数据库表");
         setTableLabel.setSize(new Dimension(50, 30));
@@ -280,9 +312,9 @@ public class GeneratorForm extends JFrame {
         setTableLabel.setVerticalAlignment(SwingConstants.CENTER);
         setTableLabelText = new JTextField("");
         setTableLabelText.setText(ConfigProperties.getProperty("table"));
-        setTableLabelText.addFocusListener(new TextFocusListener("", setTableLabelText, 10, setting));//添加焦点事件反映
+        setTableLabelText.addFocusListener(new TextFocusListener("", setTableLabelText, 12, setting));//添加焦点事件反映
         setTableLabelText.setPreferredSize(new Dimension(400, 30));
-        settingsChange(setTableLabelText, 10);
+        settingsChange(setTableLabelText, 12);
 
         setTemplateLabel = new JLabel("模板名称");
         setTemplateLabel.setSize(new Dimension(50, 30));
@@ -290,15 +322,24 @@ public class GeneratorForm extends JFrame {
         setTemplateLabel.setVerticalAlignment(SwingConstants.CENTER);
         setTemplateLabelText = new JTextField("");
         setTemplateLabelText.setText(ConfigProperties.getProperty("template"));
-        setTemplateLabelText.addFocusListener(new TextFocusListener("", setTemplateLabelText, 11, setting));//添加焦点事件反映
+        setTemplateLabelText.addFocusListener(new TextFocusListener("", setTemplateLabelText, 13, setting));//添加焦点事件反映
         setTemplateLabelText.setPreferredSize(new Dimension(40, 30));
-        settingsChange(setTemplateLabelText, 11);
+        settingsChange(setTemplateLabelText, 13);
 
         logTextArea = new JTextArea();
         logTextArea.setEditable(false);
         logTextArea.setColumns(50);
         logTextArea.setRows(10);
         JScrollPane jsp = new JScrollPane(logTextArea);
+        jsp.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent evt) {
+                if (evt.getAdjustmentType() == AdjustmentEvent.TRACK && isNeedBottom <= 3) {
+                    jsp.getVerticalScrollBar().setValue(jsp.getVerticalScrollBar().getModel().getMaximum() - jsp.getVerticalScrollBar().getModel().getExtent());
+                    isNeedBottom++;
+                }
+            }
+        });
 
         generatorBut = new JButton("开始生成");
         generatorBut.setMargin(new Insets(6, 15, 6, 15));
@@ -334,6 +375,8 @@ public class GeneratorForm extends JFrame {
                 .addComponent(setDbTypeLabel)
                 .addComponent(setJdbcUrlLabel)
                 .addComponent(setJdbcDriverLabel)
+                .addComponent(setJdbcSchemaLabel)
+                .addComponent(setJdbcCatalogLabel)
                 .addComponent(setJdbcUsernameLabel)
                 .addComponent(setJdbcPasswordLabel)
                 .addComponent(setTableLabel)
@@ -346,6 +389,8 @@ public class GeneratorForm extends JFrame {
                 .addComponent(setDbTypeComboBox)
                 .addComponent(setJdbcUrlLabelText)
                 .addComponent(setJdbcDriverLabelText)
+                .addComponent(setJdbcSchemaLabelText)
+                .addComponent(setJdbcCatalogLabelText)
                 .addComponent(setJdbcUsernameLabelText)
                 .addComponent(setJdbcPasswordLabelText)
                 .addComponent(setTableLabelText)
@@ -370,10 +415,12 @@ public class GeneratorForm extends JFrame {
         GroupLayout.ParallelGroup vParalGroup05 = layout.createParallelGroup().addComponent(setDbTypeLabel).addComponent(setDbTypeComboBox);
         GroupLayout.ParallelGroup vParalGroup06 = layout.createParallelGroup().addComponent(setJdbcUrlLabel).addComponent(setJdbcUrlLabelText);
         GroupLayout.ParallelGroup vParalGroup07 = layout.createParallelGroup().addComponent(setJdbcDriverLabel).addComponent(setJdbcDriverLabelText);
-        GroupLayout.ParallelGroup vParalGroup08 = layout.createParallelGroup().addComponent(setJdbcUsernameLabel).addComponent(setJdbcUsernameLabelText);
-        GroupLayout.ParallelGroup vParalGroup09 = layout.createParallelGroup().addComponent(setJdbcPasswordLabel).addComponent(setJdbcPasswordLabelText);
-        GroupLayout.ParallelGroup vParalGroup10 = layout.createParallelGroup().addComponent(setTableLabel).addComponent(setTableLabelText);
-        GroupLayout.ParallelGroup vParalGroup11 = layout.createParallelGroup().addComponent(setTemplateLabel).addComponent(setTemplateLabelText);
+        GroupLayout.ParallelGroup vParalGroup08 = layout.createParallelGroup().addComponent(setJdbcSchemaLabel).addComponent(setJdbcSchemaLabelText);
+        GroupLayout.ParallelGroup vParalGroup09 = layout.createParallelGroup().addComponent(setJdbcCatalogLabel).addComponent(setJdbcCatalogLabelText);
+        GroupLayout.ParallelGroup vParalGroup10 = layout.createParallelGroup().addComponent(setJdbcUsernameLabel).addComponent(setJdbcUsernameLabelText);
+        GroupLayout.ParallelGroup vParalGroup11 = layout.createParallelGroup().addComponent(setJdbcPasswordLabel).addComponent(setJdbcPasswordLabelText);
+        GroupLayout.ParallelGroup vParalGroup12 = layout.createParallelGroup().addComponent(setTableLabel).addComponent(setTableLabelText);
+        GroupLayout.ParallelGroup vParalGroup13 = layout.createParallelGroup().addComponent(setTemplateLabel).addComponent(setTemplateLabelText);
 
         // 垂直串行（上下）vParalGroup01, vParalGroup02 和 btn05
         GroupLayout.SequentialGroup vSeqGroup = layout.createSequentialGroup()
@@ -388,6 +435,8 @@ public class GeneratorForm extends JFrame {
                 .addGroup(vParalGroup09)
                 .addGroup(vParalGroup10)
                 .addGroup(vParalGroup11)
+                .addGroup(vParalGroup12)
+                .addGroup(vParalGroup13)
                 .addComponent(jsp)
                 .addComponent(generatorBut);
         ;
@@ -412,15 +461,29 @@ public class GeneratorForm extends JFrame {
 
     /**
      * 数据类型修改事件
+     *
      * @param evt
      */
     private void dbTypeComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {
         setting.setDbType(setDbTypeComboBox.getSelectedIndex() + 1);
         setDefaultJdbc(setting.getDbType());
+        // Oracle 数据库
+        if (setting.getDbType() == 2) {
+            setJdbcSchemaLabel.setVisible(true);
+            setJdbcSchemaLabelText.setVisible(true);
+            setJdbcCatalogLabel.setVisible(true);
+            setJdbcCatalogLabelText.setVisible(true);
+        } else {
+            setJdbcSchemaLabel.setVisible(false);
+            setJdbcSchemaLabelText.setVisible(false);
+            setJdbcCatalogLabel.setVisible(false);
+            setJdbcCatalogLabelText.setVisible(false);
+        }
     }
 
     /**
      * 设置数据源配置
+     *
      * @param dbType
      */
     private void setDefaultJdbc(int dbType) {
@@ -437,6 +500,7 @@ public class GeneratorForm extends JFrame {
 
     /**
      * 获取数据类型对应的数据源链接地址
+     *
      * @param dbType
      * @return
      */
@@ -494,6 +558,7 @@ public class GeneratorForm extends JFrame {
 
     /**
      * 开始生成代码
+     *
      * @param e
      * @throws Exception
      */
@@ -506,6 +571,8 @@ public class GeneratorForm extends JFrame {
         int dbType = setting.getDbType();
         String jdbcUrl = setting.getJdbcUrl();
         String jdbcDriver = setting.getJdbcDriver();
+        String jdbcSchema = setting.getJdbcSchema();
+        String jdbcCatalog = setting.getJdbcCatalog();
         String jdbcUsername = setting.getJdbcUsername();
         String jdbcPassword = setting.getJdbcPassword();
         String table = setting.getTable();
@@ -522,22 +589,34 @@ public class GeneratorForm extends JFrame {
             return;
         }
         if (jdbcUrl == null || "".equals(jdbcUrl)) {
-            new Dialog("请输入数据库链接地址").jd.setVisible(true);
+            new Dialog("请输入数据源:URL").jd.setVisible(true);
             generatorBut.setEnabled(true);
             return;
         }
         if (jdbcDriver == null || "".equals(jdbcDriver)) {
-            new Dialog("请输入数据库链接驱动").jd.setVisible(true);
+            new Dialog("请输入数据源:驱动").jd.setVisible(true);
             generatorBut.setEnabled(true);
             return;
         }
+        if (dbType == 2) {
+            if (jdbcSchema == null || "".equals(jdbcSchema)) {
+                new Dialog("请输入数据源:schema").jd.setVisible(true);
+                generatorBut.setEnabled(true);
+                return;
+            }
+            if (jdbcCatalog == null || "".equals(jdbcCatalog)) {
+                new Dialog("请输入数据源:catalog").jd.setVisible(true);
+                generatorBut.setEnabled(true);
+                return;
+            }
+        }
         if (jdbcUsername == null || "".equals(jdbcUsername)) {
-            new Dialog("请输入数据库用户名").jd.setVisible(true);
+            new Dialog("请输入数据源:用户名").jd.setVisible(true);
             generatorBut.setEnabled(true);
             return;
         }
         if (jdbcPassword == null || "".equals(jdbcPassword)) {
-            new Dialog("请输入数据库密码").jd.setVisible(true);
+            new Dialog("请输入数据源:密码").jd.setVisible(true);
             generatorBut.setEnabled(true);
             return;
         }
@@ -566,6 +645,18 @@ public class GeneratorForm extends JFrame {
         if (jdbcUrl != null && !"".equals(jdbcUrl)) {
             GeneratorProperties.setProperty("jdbc_url", jdbcUrl);
             ConfigProperties.setProperty("jdbc_url", jdbcUrl);
+        }
+        if (jdbcDriver != null && !"".equals(jdbcDriver)) {
+            GeneratorProperties.setProperty("jdbc_driver", jdbcDriver);
+            ConfigProperties.setProperty("jdbc_driver", jdbcDriver);
+        }
+        if (jdbcSchema != null && !"".equals(jdbcSchema)) {
+            GeneratorProperties.setProperty("jdbc_schema", jdbcSchema);
+            ConfigProperties.setProperty("jdbc_schema", jdbcSchema);
+        }
+        if (jdbcCatalog != null && !"".equals(jdbcCatalog)) {
+            GeneratorProperties.setProperty("jdbc_catalog", jdbcCatalog);
+            ConfigProperties.setProperty("jdbc_catalog", jdbcCatalog);
         }
         if (jdbcDriver != null && !"".equals(jdbcDriver)) {
             GeneratorProperties.setProperty("jdbc_driver", jdbcDriver);
@@ -692,15 +783,21 @@ public class GeneratorForm extends JFrame {
                 setting.setJdbcDriver(temp);
                 break;
             case 8:
-                setting.setJdbcUsername(temp);
+                setting.setJdbcSchema(temp);
                 break;
             case 9:
-                setting.setJdbcPassword(temp);
+                setting.setJdbcCatalog(temp);
                 break;
             case 10:
-                setting.setTable(temp);
+                setting.setJdbcUsername(temp);
                 break;
             case 11:
+                setting.setJdbcPassword(temp);
+                break;
+            case 12:
+                setting.setTable(temp);
+                break;
+            case 13:
                 setting.setTemplate(temp);
                 break;
         }
@@ -755,15 +852,21 @@ class TextFocusListener implements FocusListener {
                 settings.setJdbcDriver(temp);
                 break;
             case 8:
-                settings.setJdbcUsername(temp);
+                settings.setJdbcSchema(temp);
                 break;
             case 9:
-                settings.setJdbcPassword(temp);
+                settings.setJdbcCatalog(temp);
                 break;
             case 10:
-                settings.setTable(temp);
+                settings.setJdbcUsername(temp);
                 break;
             case 11:
+                settings.setJdbcPassword(temp);
+                break;
+            case 12:
+                settings.setTable(temp);
+                break;
+            case 13:
                 settings.setTemplate(temp);
                 break;
         }
