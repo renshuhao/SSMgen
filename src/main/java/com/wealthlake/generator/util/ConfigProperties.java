@@ -2,16 +2,7 @@ package com.wealthlake.generator.util;
 
 import cn.org.rapid_framework.generator.util.ClassHelper;
 import cn.org.rapid_framework.generator.util.FileHelper;
-import org.w3c.dom.Document;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
@@ -85,7 +76,13 @@ public class ConfigProperties {
     }
 
     public static String getProperty(String key) {
-        return p.getProperty(key);
+        String value = p.getProperty(key);
+        return value != null && !"".equals(value.trim()) ? value : null;
+    }
+
+    public static Integer getInt(String key) {
+        Object value = p.get(key);
+        return value == null ? null : Integer.valueOf(String.valueOf(value));
     }
 
     public static String getProperty(String key, String defaultValue) {

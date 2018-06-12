@@ -68,6 +68,8 @@ public class GeneratorForm extends JFrame {
     String logFolder = "log";
     boolean logFileCreate = false;
     int isNeedBottom = 0;
+    Integer initDbType = null;
+    StringBuffer errorMsgBuffer = new StringBuffer();
 
     // 程序入口
     public static void main(String args[]) {
@@ -138,6 +140,15 @@ public class GeneratorForm extends JFrame {
             } catch (Exception e1) {
                 outputException(e1);
             }
+
+            if (logFileCreate) {
+                System.out.println(errorMsgBuffer.toString());
+                refreshLog();
+            } else {
+                logTextArea.append(errorMsgBuffer.toString());
+                logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+                isNeedBottom = 0;
+            }
         } catch (Exception e1) {
             outputException(e1);
         }
@@ -148,17 +159,19 @@ public class GeneratorForm extends JFrame {
      */
     private void refreshLog() {
         try {
-            if (!isRead) {
-                isRead = true;
-                FileLineInfo fileLineInfo = FileReadUtil.readAppointedLineNumberAfter(logFile, lineNumber);
-                if (fileLineInfo != null) {
-                    lineNumber = fileLineInfo.getLineNumber();
-                    logTextArea.append(fileLineInfo.getContent());
-                    logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
-                    isNeedBottom = 0;
-                    ConfigProperties.setProperty("lineNumber", String.valueOf(lineNumber));
+            if (logFileCreate) {
+                if (!isRead) {
+                    isRead = true;
+                    FileLineInfo fileLineInfo = FileReadUtil.readAppointedLineNumberAfter(logFile, lineNumber);
+                    if (fileLineInfo != null) {
+                        lineNumber = fileLineInfo.getLineNumber();
+                        logTextArea.append(fileLineInfo.getContent());
+                        logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+                        isNeedBottom = 0;
+                        ConfigProperties.setProperty("lineNumber", String.valueOf(lineNumber));
+                    }
+                    isRead = false;
                 }
-                isRead = false;
             }
         } catch (Exception e) {
             outputException(e);
@@ -174,9 +187,14 @@ public class GeneratorForm extends JFrame {
         if (logFileCreate) {
             System.out.println(e);
         } else {
-            logTextArea.append(e.getClass() + e.getMessage());
-            logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
-            isNeedBottom = 0;
+            if (logTextArea != null) {
+                logTextArea.append(e.getClass() + e.getMessage());
+                logTextArea.paintImmediately(logTextArea.getX(), logTextArea.getY(), logTextArea.getWidth(), logTextArea.getHeight());
+                isNeedBottom = 0;
+            } else {
+                errorMsgBuffer.append(e.getClass() + e.getMessage());
+                errorMsgBuffer.append("\r\n");
+            }
         }
     }
 
@@ -238,6 +256,14 @@ public class GeneratorForm extends JFrame {
                 dbTypeComboBox1ItemStateChanged(evt);
             }
         });
+        try {
+            initDbType = ConfigProperties.getInt("dbType");
+            if (initDbType != null) {
+                setDbTypeComboBox.setSelectedIndex(initDbType - 1);
+            }
+        } catch (Exception e) {
+            outputException(e);
+        }
 
         setJdbcUrlLabel = new JLabel("数据源:URL");
         setJdbcUrlLabel.setSize(new Dimension(50, 30));
@@ -280,12 +306,6 @@ public class GeneratorForm extends JFrame {
         setJdbcCatalogLabel.setVisible(false);
         setJdbcCatalogLabelText.setVisible(false);
 
-        dbTypeComboBox1ItemStateChanged(null);
-        settingsChange(setJdbcUrlLabelText, 6);
-        settingsChange(setJdbcDriverLabelText, 7);
-        settingsChange(setJdbcSchemaLabelText, 8);
-        settingsChange(setJdbcCatalogLabelText, 9);
-
         setJdbcUsernameLabel = new JLabel("数据源:用户名");
         setJdbcUsernameLabel.setSize(new Dimension(50, 30));
         setJdbcUsernameLabel.setHorizontalAlignment(SwingConstants.LEFT);
@@ -294,7 +314,6 @@ public class GeneratorForm extends JFrame {
         setJdbcUsernameLabelText.setText(ConfigProperties.getProperty("jdbc_username"));
         setJdbcUsernameLabelText.addFocusListener(new TextFocusListener("", setJdbcUsernameLabelText, 10, setting));//添加焦点事件反映
         setJdbcUsernameLabelText.setPreferredSize(new Dimension(400, 30));
-        settingsChange(setJdbcUsernameLabelText, 10);
 
         setJdbcPasswordLabel = new JLabel("数据源:密码");
         setJdbcPasswordLabel.setSize(new Dimension(50, 30));
@@ -304,6 +323,13 @@ public class GeneratorForm extends JFrame {
         setJdbcPasswordLabelText.setText(ConfigProperties.getProperty("jdbc_password"));
         setJdbcPasswordLabelText.addFocusListener(new TextFocusListener("", setJdbcPasswordLabelText, 11, setting));//添加焦点事件反映
         setJdbcPasswordLabelText.setPreferredSize(new Dimension(400, 30));
+
+        dbTypeComboBox1ItemStateChanged(null);
+        settingsChange(setJdbcUrlLabelText, 6);
+        settingsChange(setJdbcDriverLabelText, 7);
+        settingsChange(setJdbcSchemaLabelText, 8);
+        settingsChange(setJdbcCatalogLabelText, 9);
+        settingsChange(setJdbcUsernameLabelText, 10);
         settingsChange(setJdbcPasswordLabelText, 11);
 
         setTableLabel = new JLabel("数据库表");
@@ -465,8 +491,12 @@ public class GeneratorForm extends JFrame {
      * @param evt
      */
     private void dbTypeComboBox1ItemStateChanged(java.awt.event.ItemEvent evt) {
+        if (evt != null) {
+            setJdbcUrlLabelText.setText("");
+            setJdbcDriverLabelText.setText("");
+        }
         setting.setDbType(setDbTypeComboBox.getSelectedIndex() + 1);
-        setDefaultJdbc(setting.getDbType());
+
         // Oracle 数据库
         if (setting.getDbType() == 2) {
             setJdbcSchemaLabel.setVisible(true);
@@ -478,6 +508,21 @@ public class GeneratorForm extends JFrame {
             setJdbcSchemaLabelText.setVisible(false);
             setJdbcCatalogLabel.setVisible(false);
             setJdbcCatalogLabelText.setVisible(false);
+        }
+
+        if (initDbType != null && initDbType == setting.getDbType()) {
+            setJdbcUrlLabelText.setText(ConfigProperties.getProperty("jdbc_url"));
+            setJdbcDriverLabelText.setText(ConfigProperties.getProperty("jdbc_driver"));
+            if (setting.getDbType() == 2) {
+                setJdbcSchemaLabelText.setText(ConfigProperties.getProperty("jdbc_schema"));
+                setJdbcCatalogLabelText.setText(ConfigProperties.getProperty("jdbc_catalog"));
+            }
+            setJdbcUsernameLabelText.setText(ConfigProperties.getProperty("jdbc_username"));
+            setJdbcPasswordLabelText.setText(ConfigProperties.getProperty("jdbc_password"));
+
+        } else {
+            // 默认的jdbc配置
+            setDefaultJdbc(setting.getDbType());
         }
     }
 
